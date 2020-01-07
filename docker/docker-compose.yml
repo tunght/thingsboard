@@ -42,7 +42,7 @@ services:
       - "6379"
   tb-js-executor:
     restart: always
-    image: "${DOCKER_REPO}/${JS_EXECUTOR_DOCKER_NAME}:${TB_VERSION}"
+    image: "${JS_EXECUTOR_DOCKER_NAME}:${TB_VERSION}"
     scale: 20
     env_file:
       - tb-js-executor.env
@@ -50,7 +50,7 @@ services:
       - kafka
   tb1:
     restart: always
-    image: "${DOCKER_REPO}/${TB_NODE_DOCKER_NAME}:${TB_VERSION}"
+    image: "${TB_NODE_DOCKER_NAME}:${TB_VERSION}"
     ports:
       - "8080"
     logging:
@@ -63,6 +63,7 @@ services:
       CLUSTER_NODE_ID: tb1
     env_file:
       - tb-node.env
+      - tb-node.cassandra.env
     volumes:
       - ./tb-node/conf:/config
       - ./tb-node/log:/var/log/thingsboard
@@ -72,7 +73,7 @@ services:
       - tb-js-executor
   tb2:
     restart: always
-    image: "${DOCKER_REPO}/${TB_NODE_DOCKER_NAME}:${TB_VERSION}"
+    image: "${TB_NODE_DOCKER_NAME}:${TB_VERSION}"
     ports:
       - "8080"
     logging:
@@ -85,6 +86,7 @@ services:
       CLUSTER_NODE_ID: tb2
     env_file:
       - tb-node.env
+      - tb-node.cassandra.env
     volumes:
       - ./tb-node/conf:/config
       - ./tb-node/log:/var/log/thingsboard
@@ -94,7 +96,7 @@ services:
       - tb-js-executor
   tb-mqtt-transport1:
     restart: always
-    image: "${DOCKER_REPO}/${MQTT_TRANSPORT_DOCKER_NAME}:${TB_VERSION}"
+    image: "${MQTT_TRANSPORT_DOCKER_NAME}:${TB_VERSION}"
     ports:
       - "1883"
     environment:
@@ -109,7 +111,7 @@ services:
       - kafka
   tb-mqtt-transport2:
     restart: always
-    image: "${DOCKER_REPO}/${MQTT_TRANSPORT_DOCKER_NAME}:${TB_VERSION}"
+    image: "${MQTT_TRANSPORT_DOCKER_NAME}:${TB_VERSION}"
     ports:
       - "1883"
     environment:
@@ -124,7 +126,7 @@ services:
       - kafka
   tb-http-transport1:
     restart: always
-    image: "${DOCKER_REPO}/${HTTP_TRANSPORT_DOCKER_NAME}:${TB_VERSION}"
+    image: "${HTTP_TRANSPORT_DOCKER_NAME}:${TB_VERSION}"
     ports:
       - "8081"
     environment:
@@ -139,7 +141,7 @@ services:
       - kafka
   tb-http-transport2:
     restart: always
-    image: "${DOCKER_REPO}/${HTTP_TRANSPORT_DOCKER_NAME}:${TB_VERSION}"
+    image: "${HTTP_TRANSPORT_DOCKER_NAME}:${TB_VERSION}"
     ports:
       - "8081"
     environment:
@@ -154,7 +156,7 @@ services:
       - kafka
   tb-coap-transport:
     restart: always
-    image: "${DOCKER_REPO}/${COAP_TRANSPORT_DOCKER_NAME}:${TB_VERSION}"
+    image: "${COAP_TRANSPORT_DOCKER_NAME}:${TB_VERSION}"
     ports:
       - "5683:5683/udp"
     environment:
@@ -169,14 +171,14 @@ services:
       - kafka
   tb-web-ui1:
     restart: always
-    image: "${DOCKER_REPO}/${WEB_UI_DOCKER_NAME}:${TB_VERSION}"
+    image: "${WEB_UI_DOCKER_NAME}:${TB_VERSION}"
     ports:
       - "8080"
     env_file:
       - tb-web-ui.env
   tb-web-ui2:
     restart: always
-    image: "${DOCKER_REPO}/${WEB_UI_DOCKER_NAME}:${TB_VERSION}"
+    image: "${WEB_UI_DOCKER_NAME}:${TB_VERSION}"
     ports:
       - "8080"
     env_file:
