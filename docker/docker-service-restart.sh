@@ -15,29 +15,6 @@
 # limitations under the License.
 #
 
-for i in "$@"
-do
-case $i in
-    --fromVersion=*)
-    FROM_VERSION="${i#*=}"
-    shift
-    ;;
-    *)
-            # unknown option
-    ;;
-esac
-done
-
-if [[ -z "${FROM_VERSION// }" ]]; then
-    echo "--fromVersion parameter is invalid or unspecified!"
-    echo "Usage: docker-upgrade-tb.sh --fromVersion={VERSION}"
-    exit 1
-else
-    fromVersion="${FROM_VERSION// }"
-fi
-
-set -e
-
 source .env
-docker-compose -f docker-compose.yml $ADDITIONAL_COMPOSE_ARGS up -d redis 
-docker-compose -f docker-compose.yml $ADDITIONAL_COMPOSE_ARGS run --no-deps --rm -e UPGRADE_TB=true -e FROM_VERSION=${fromVersion} tb1
+docker-compose -f docker-compose.yml restart $@
+

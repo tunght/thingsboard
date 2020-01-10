@@ -1,3 +1,4 @@
+
 #!/bin/bash
 #
 # Copyright © 2016-2019 The Thingsboard Authors
@@ -15,29 +16,12 @@
 # limitations under the License.
 #
 
-for i in "$@"
-do
-case $i in
-    --fromVersion=*)
-    FROM_VERSION="${i#*=}"
-    shift
-    ;;
-    *)
-            # unknown option
-    ;;
-esac
-done
+folder=$1
+docker build -t js-executor $folder/js-executor/target
+docker build -t app-node $folder/tb-node/target
+docker build -t web-ui $folder/web-ui/target
+docker build -t mqtt-transport $folder/transport/mqtt/target
+docker build -t http-transport $folder/transport/http/target
+docker build -t coap-transport $folder/transport/coap/target
 
-if [[ -z "${FROM_VERSION// }" ]]; then
-    echo "--fromVersion parameter is invalid or unspecified!"
-    echo "Usage: docker-upgrade-tb.sh --fromVersion={VERSION}"
-    exit 1
-else
-    fromVersion="${FROM_VERSION// }"
-fi
 
-set -e
-
-source .env
-docker-compose -f docker-compose.yml $ADDITIONAL_COMPOSE_ARGS up -d redis 
-docker-compose -f docker-compose.yml $ADDITIONAL_COMPOSE_ARGS run --no-deps --rm -e UPGRADE_TB=true -e FROM_VERSION=${fromVersion} tb1

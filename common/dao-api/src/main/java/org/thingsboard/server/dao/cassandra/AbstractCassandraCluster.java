@@ -15,7 +15,6 @@
  */
 package org.thingsboard.server.dao.cassandra;
 
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.HostDistance;
@@ -96,15 +95,13 @@ public abstract class AbstractCassandraCluster {
 
     protected void init(String keyspaceName) {
         this.keyspaceName = keyspaceName;
-        this.clusterBuilder = Cluster.builder()
-                .addContactPointsWithPorts(getContactPoints(url))
-                .withClusterName(clusterName)
-                .withSocketOptions(socketOpts.getOpts())
-                .withPoolingOptions(new PoolingOptions()
-                        .setMaxRequestsPerConnection(HostDistance.LOCAL, max_requests_local)
-                        .setMaxRequestsPerConnection(HostDistance.REMOTE, max_requests_remote));
+        this.clusterBuilder = Cluster.builder().addContactPointsWithPorts(getContactPoints(url))
+                .withClusterName(clusterName).withSocketOptions(socketOpts.getOpts()).withPoolingOptions(
+                        new PoolingOptions().setMaxRequestsPerConnection(HostDistance.LOCAL, max_requests_local)
+                                .setMaxRequestsPerConnection(HostDistance.REMOTE, max_requests_remote));
         this.clusterBuilder.withQueryOptions(queryOpts.getOpts());
-        this.clusterBuilder.withCompression(StringUtils.isEmpty(compression) ? Compression.NONE : Compression.valueOf(compression.toUpperCase()));
+        this.clusterBuilder.withCompression(
+                StringUtils.isEmpty(compression) ? Compression.NONE : Compression.valueOf(compression.toUpperCase()));
         if (ssl) {
             this.clusterBuilder.withSSL();
         }
@@ -156,16 +153,18 @@ public abstract class AbstractCassandraCluster {
                 } else {
                     session = cluster.connect();
                 }
-//                For Cassandra Driver version 3.5.0
+                // For Cassandra Driver version 3.5.0
                 DefaultPropertyMapper propertyMapper = new DefaultPropertyMapper();
                 propertyMapper.setPropertyAccessStrategy(PropertyAccessStrategy.FIELDS);
-                MappingConfiguration configuration = MappingConfiguration.builder().withPropertyMapper(propertyMapper).build();
+                MappingConfiguration configuration = MappingConfiguration.builder().withPropertyMapper(propertyMapper)
+                        .build();
                 mappingManager = new MappingManager(session, configuration);
-//                For Cassandra Driver version 3.0.0
-//                mappingManager = new MappingManager(session);
+                // For Cassandra Driver version 3.0.0
+                // mappingManager = new MappingManager(session);
                 break;
             } catch (Exception e) {
-                log.warn("Failed to initialize cassandra cluster due to {}. Will retry in {} ms", e.getMessage(), initRetryInterval);
+                log.warn("Failed to initialize cassandra cluster due to {}. Will retry in {} ms", e.getMessage(),
+                        initRetryInterval);
                 try {
                     Thread.sleep(initRetryInterval);
                 } catch (InterruptedException ie) {
