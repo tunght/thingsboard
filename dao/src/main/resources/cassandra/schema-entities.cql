@@ -14,13 +14,13 @@
 -- limitations under the License.
 --
 
-CREATE KEYSPACE IF NOT EXISTS thingsboard
+CREATE KEYSPACE IF NOT EXISTS smartspaceai
 WITH replication = {
 	'class' : 'SimpleStrategy',
 	'replication_factor' : 1
 };
 
-CREATE TABLE IF NOT EXISTS thingsboard.user (
+CREATE TABLE IF NOT EXISTS smartspaceai.user (
 	id timeuuid,
 	tenant_id timeuuid,
 	customer_id timeuuid,
@@ -33,30 +33,30 @@ CREATE TABLE IF NOT EXISTS thingsboard.user (
 	PRIMARY KEY (id, tenant_id, customer_id, authority)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.user_by_email AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.user_by_email AS
 	SELECT *
-	from thingsboard.user
+	from smartspaceai.user
 	WHERE email IS NOT NULL AND tenant_id IS NOT NULL AND customer_id IS NOT NULL AND id IS NOT NULL AND authority IS NOT
 	NULL
 	PRIMARY KEY ( email, tenant_id, customer_id, id, authority );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.user_by_tenant_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.user_by_tenant_and_search_text AS
 	SELECT *
-	from thingsboard.user
+	from smartspaceai.user
 	WHERE tenant_id IS NOT NULL AND customer_id IS NOT NULL AND authority IS NOT NULL AND search_text IS NOT NULL AND id
 	IS NOT NULL
 	PRIMARY KEY ( tenant_id, customer_id, authority, search_text, id )
 	WITH CLUSTERING ORDER BY ( customer_id DESC, authority DESC, search_text ASC, id DESC );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.user_by_customer_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.user_by_customer_and_search_text AS
 	SELECT *
-	from thingsboard.user
+	from smartspaceai.user
 	WHERE tenant_id IS NOT NULL AND customer_id IS NOT NULL AND authority IS NOT NULL AND search_text IS NOT NULL AND id
 	IS NOT NULL
 	PRIMARY KEY ( customer_id, tenant_id, authority, search_text, id )
 	WITH CLUSTERING ORDER BY ( tenant_id DESC, authority DESC, search_text ASC, id DESC );
 
-CREATE TABLE IF NOT EXISTS thingsboard.user_credentials (
+CREATE TABLE IF NOT EXISTS smartspaceai.user_credentials (
 	id timeuuid PRIMARY KEY,
 	user_id timeuuid,
 	enabled boolean,
@@ -65,38 +65,38 @@ CREATE TABLE IF NOT EXISTS thingsboard.user_credentials (
 	reset_token text
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.user_credentials_by_user AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.user_credentials_by_user AS
 	SELECT *
-	from thingsboard.user_credentials
+	from smartspaceai.user_credentials
 	WHERE user_id IS NOT NULL AND id IS NOT NULL
 	PRIMARY KEY ( user_id, id );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.user_credentials_by_activate_token AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.user_credentials_by_activate_token AS
 	SELECT *
-	from thingsboard.user_credentials
+	from smartspaceai.user_credentials
 	WHERE activate_token IS NOT NULL AND id IS NOT NULL
 	PRIMARY KEY ( activate_token, id );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.user_credentials_by_reset_token AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.user_credentials_by_reset_token AS
 	SELECT *
-	from thingsboard.user_credentials
+	from smartspaceai.user_credentials
 	WHERE reset_token IS NOT NULL AND id IS NOT NULL
 	PRIMARY KEY ( reset_token, id );
 
-CREATE TABLE IF NOT EXISTS thingsboard.admin_settings (
+CREATE TABLE IF NOT EXISTS smartspaceai.admin_settings (
 	id timeuuid PRIMARY KEY,
 	key text,
 	json_value text
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.admin_settings_by_key AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.admin_settings_by_key AS
 	SELECT *
-	from thingsboard.admin_settings
+	from smartspaceai.admin_settings
 	WHERE key IS NOT NULL AND id IS NOT NULL
 	PRIMARY KEY ( key, id )
 	WITH CLUSTERING ORDER BY ( id DESC );
 
-CREATE TABLE IF NOT EXISTS thingsboard.tenant (
+CREATE TABLE IF NOT EXISTS smartspaceai.tenant (
 	id timeuuid,
 	title text,
 	search_text text,
@@ -113,14 +113,14 @@ CREATE TABLE IF NOT EXISTS thingsboard.tenant (
 	PRIMARY KEY (id, region)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.tenant_by_region_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.tenant_by_region_and_search_text AS
 	SELECT *
-	from thingsboard.tenant
+	from smartspaceai.tenant
 	WHERE region IS NOT NULL AND search_text IS NOT NULL AND id IS NOT NULL
 	PRIMARY KEY ( region, search_text, id )
 	WITH CLUSTERING ORDER BY ( search_text ASC, id DESC );
 
-CREATE TABLE IF NOT EXISTS thingsboard.customer (
+CREATE TABLE IF NOT EXISTS smartspaceai.customer (
 	id timeuuid,
 	tenant_id timeuuid,
 	title text,
@@ -137,21 +137,21 @@ CREATE TABLE IF NOT EXISTS thingsboard.customer (
 	PRIMARY KEY (id, tenant_id)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.customer_by_tenant_and_title AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.customer_by_tenant_and_title AS
 	SELECT *
-	from thingsboard.customer
+	from smartspaceai.customer
 	WHERE tenant_id IS NOT NULL AND title IS NOT NULL AND id IS NOT NULL
 	PRIMARY KEY ( tenant_id, title, id )
 	WITH CLUSTERING ORDER BY ( title ASC, id DESC );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.customer_by_tenant_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.customer_by_tenant_and_search_text AS
 	SELECT *
-	from thingsboard.customer
+	from smartspaceai.customer
 	WHERE tenant_id IS NOT NULL AND search_text IS NOT NULL AND id IS NOT NULL
 	PRIMARY KEY ( tenant_id, search_text, id )
 	WITH CLUSTERING ORDER BY ( search_text ASC, id DESC );
 
-CREATE TABLE IF NOT EXISTS thingsboard.device (
+CREATE TABLE IF NOT EXISTS smartspaceai.device (
     id timeuuid,
     tenant_id timeuuid,
     customer_id timeuuid,
@@ -163,9 +163,9 @@ CREATE TABLE IF NOT EXISTS thingsboard.device (
     PRIMARY KEY (id, tenant_id, customer_id, type)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.device_by_tenant_and_name AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.device_by_tenant_and_name AS
     SELECT *
-    from thingsboard.device
+    from smartspaceai.device
     WHERE tenant_id IS NOT NULL
       AND customer_id IS NOT NULL
       AND type IS NOT NULL
@@ -174,9 +174,9 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.device_by_tenant_and_name AS
     PRIMARY KEY ( tenant_id, name, id, customer_id, type)
     WITH CLUSTERING ORDER BY ( name ASC, id DESC, customer_id DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.device_by_tenant_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.device_by_tenant_and_search_text AS
     SELECT *
-    from thingsboard.device
+    from smartspaceai.device
     WHERE tenant_id IS NOT NULL
       AND customer_id IS NOT NULL
       AND type IS NOT NULL
@@ -185,9 +185,9 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.device_by_tenant_and_search_t
     PRIMARY KEY ( tenant_id, search_text, id, customer_id, type)
     WITH CLUSTERING ORDER BY ( search_text ASC, id DESC, customer_id DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.device_by_tenant_by_type_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.device_by_tenant_by_type_and_search_text AS
     SELECT *
-    from thingsboard.device
+    from smartspaceai.device
     WHERE tenant_id IS NOT NULL
       AND customer_id IS NOT NULL
       AND type IS NOT NULL
@@ -196,9 +196,9 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.device_by_tenant_by_type_and_
     PRIMARY KEY ( tenant_id, type, search_text, id, customer_id)
     WITH CLUSTERING ORDER BY ( type ASC, search_text ASC, id DESC, customer_id DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.device_by_customer_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.device_by_customer_and_search_text AS
     SELECT *
-    from thingsboard.device
+    from smartspaceai.device
     WHERE tenant_id IS NOT NULL
       AND customer_id IS NOT NULL
       AND type IS NOT NULL
@@ -207,9 +207,9 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.device_by_customer_and_search
     PRIMARY KEY ( customer_id, tenant_id, search_text, id, type )
     WITH CLUSTERING ORDER BY ( tenant_id DESC, search_text ASC, id DESC );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.device_by_customer_by_type_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.device_by_customer_by_type_and_search_text AS
     SELECT *
-    from thingsboard.device
+    from smartspaceai.device
     WHERE tenant_id IS NOT NULL
       AND customer_id IS NOT NULL
       AND type IS NOT NULL
@@ -218,7 +218,7 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.device_by_customer_by_type_an
     PRIMARY KEY ( customer_id, tenant_id, type, search_text, id )
     WITH CLUSTERING ORDER BY ( tenant_id DESC, type ASC, search_text ASC, id DESC );
 
-CREATE TABLE IF NOT EXISTS thingsboard.device_credentials (
+CREATE TABLE IF NOT EXISTS smartspaceai.device_credentials (
 	id timeuuid PRIMARY KEY,
 	device_id timeuuid,
 	credentials_type text,
@@ -226,19 +226,19 @@ CREATE TABLE IF NOT EXISTS thingsboard.device_credentials (
 	credentials_value text
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.device_credentials_by_device AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.device_credentials_by_device AS
 	SELECT *
-	from thingsboard.device_credentials
+	from smartspaceai.device_credentials
 	WHERE device_id IS NOT NULL AND id IS NOT NULL
 	PRIMARY KEY ( device_id, id );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.device_credentials_by_credentials_id AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.device_credentials_by_credentials_id AS
 	SELECT *
-	from thingsboard.device_credentials
+	from smartspaceai.device_credentials
 	WHERE credentials_id IS NOT NULL AND id IS NOT NULL
 	PRIMARY KEY ( credentials_id, id );
 
-CREATE TABLE IF NOT EXISTS thingsboard.asset (
+CREATE TABLE IF NOT EXISTS smartspaceai.asset (
     id timeuuid,
     tenant_id timeuuid,
     customer_id timeuuid,
@@ -250,49 +250,49 @@ CREATE TABLE IF NOT EXISTS thingsboard.asset (
     PRIMARY KEY (id, tenant_id, customer_id, type)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.asset_by_tenant_and_name AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.asset_by_tenant_and_name AS
     SELECT *
-    from thingsboard.asset
+    from smartspaceai.asset
     WHERE tenant_id IS NOT NULL AND customer_id IS NOT NULL AND type IS NOT NULL AND name IS NOT NULL AND id IS NOT NULL
     PRIMARY KEY ( tenant_id, name, id, customer_id, type)
     WITH CLUSTERING ORDER BY ( name ASC, id DESC, customer_id DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.asset_by_tenant_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.asset_by_tenant_and_search_text AS
     SELECT *
-    from thingsboard.asset
+    from smartspaceai.asset
     WHERE tenant_id IS NOT NULL AND customer_id IS NOT NULL AND type IS NOT NULL AND search_text IS NOT NULL AND id IS NOT NULL
     PRIMARY KEY ( tenant_id, search_text, id, customer_id, type)
     WITH CLUSTERING ORDER BY ( search_text ASC, id DESC, customer_id DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.asset_by_tenant_by_type_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.asset_by_tenant_by_type_and_search_text AS
     SELECT *
-    from thingsboard.asset
+    from smartspaceai.asset
     WHERE tenant_id IS NOT NULL AND customer_id IS NOT NULL AND type IS NOT NULL AND search_text IS NOT NULL AND id IS NOT NULL
     PRIMARY KEY ( tenant_id, type, search_text, id, customer_id)
     WITH CLUSTERING ORDER BY ( type ASC, search_text ASC, id DESC, customer_id DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.asset_by_customer_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.asset_by_customer_and_search_text AS
     SELECT *
-    from thingsboard.asset
+    from smartspaceai.asset
     WHERE tenant_id IS NOT NULL AND customer_id IS NOT NULL AND type IS NOT NULL AND search_text IS NOT NULL AND id IS NOT NULL
     PRIMARY KEY ( customer_id, tenant_id, search_text, id, type )
     WITH CLUSTERING ORDER BY ( tenant_id DESC, search_text ASC, id DESC );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.asset_by_customer_by_type_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.asset_by_customer_by_type_and_search_text AS
     SELECT *
-    from thingsboard.asset
+    from smartspaceai.asset
     WHERE tenant_id IS NOT NULL AND customer_id IS NOT NULL AND type IS NOT NULL AND search_text IS NOT NULL AND id IS NOT NULL
     PRIMARY KEY ( customer_id, tenant_id, type, search_text, id )
     WITH CLUSTERING ORDER BY ( tenant_id DESC, type ASC, search_text ASC, id DESC );
 
-CREATE TABLE IF NOT EXISTS thingsboard.entity_subtype (
+CREATE TABLE IF NOT EXISTS smartspaceai.entity_subtype (
     tenant_id timeuuid,
     entity_type text, // (DEVICE, ASSET)
     type text,
     PRIMARY KEY (tenant_id, entity_type, type)
 );
 
-CREATE TABLE IF NOT EXISTS thingsboard.alarm (
+CREATE TABLE IF NOT EXISTS smartspaceai.alarm (
 	id timeuuid,
 	tenant_id timeuuid,
 	type text,
@@ -310,15 +310,15 @@ CREATE TABLE IF NOT EXISTS thingsboard.alarm (
 	PRIMARY KEY ((tenant_id, originator_id, originator_type), type, id)
 ) WITH CLUSTERING ORDER BY ( type ASC, id DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.alarm_by_id AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.alarm_by_id AS
     SELECT *
-    from thingsboard.alarm
+    from smartspaceai.alarm
     WHERE tenant_id IS NOT NULL AND originator_id IS NOT NULL AND originator_type IS NOT NULL AND type IS NOT NULL
     AND type IS NOT NULL AND id IS NOT NULL
     PRIMARY KEY (id, tenant_id, originator_id, originator_type, type)
     WITH CLUSTERING ORDER BY ( tenant_id ASC, originator_id ASC, originator_type ASC, type ASC);
 
-CREATE TABLE IF NOT EXISTS thingsboard.relation (
+CREATE TABLE IF NOT EXISTS smartspaceai.relation (
 	from_id timeuuid,
 	from_type text,
 	to_id timeuuid,
@@ -329,21 +329,21 @@ CREATE TABLE IF NOT EXISTS thingsboard.relation (
 	PRIMARY KEY ((from_id, from_type), relation_type_group, relation_type, to_id, to_type)
 ) WITH CLUSTERING ORDER BY ( relation_type_group ASC, relation_type ASC, to_id ASC, to_type ASC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.relation_by_type_and_child_type AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.relation_by_type_and_child_type AS
     SELECT *
-    from thingsboard.relation
+    from smartspaceai.relation
     WHERE from_id IS NOT NULL AND from_type IS NOT NULL AND relation_type_group IS NOT NULL AND relation_type IS NOT NULL AND to_id IS NOT NULL AND to_type IS NOT NULL
     PRIMARY KEY ((from_id, from_type), relation_type_group, relation_type, to_type, to_id)
     WITH CLUSTERING ORDER BY ( relation_type_group ASC, relation_type ASC, to_type ASC, to_id DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.reverse_relation AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.reverse_relation AS
     SELECT *
-    from thingsboard.relation
+    from smartspaceai.relation
     WHERE from_id IS NOT NULL AND from_type IS NOT NULL AND relation_type_group IS NOT NULL AND relation_type IS NOT NULL AND to_id IS NOT NULL AND to_type IS NOT NULL
     PRIMARY KEY ((to_id, to_type), relation_type_group, relation_type, from_id, from_type)
     WITH CLUSTERING ORDER BY ( relation_type_group ASC, relation_type ASC, from_id ASC, from_type ASC);
 
-CREATE TABLE IF NOT EXISTS thingsboard.widgets_bundle (
+CREATE TABLE IF NOT EXISTS smartspaceai.widgets_bundle (
     id timeuuid,
     tenant_id timeuuid,
     alias text,
@@ -353,21 +353,21 @@ CREATE TABLE IF NOT EXISTS thingsboard.widgets_bundle (
     PRIMARY KEY (id, tenant_id)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.widgets_bundle_by_tenant_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.widgets_bundle_by_tenant_and_search_text AS
     SELECT *
-    from thingsboard.widgets_bundle
+    from smartspaceai.widgets_bundle
     WHERE tenant_id IS NOT NULL AND search_text IS NOT NULL AND id IS NOT NULL
     PRIMARY KEY ( tenant_id, search_text, id )
     WITH CLUSTERING ORDER BY ( search_text ASC, id DESC );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.widgets_bundle_by_tenant_and_alias AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.widgets_bundle_by_tenant_and_alias AS
     SELECT *
-    from thingsboard.widgets_bundle
+    from smartspaceai.widgets_bundle
     WHERE tenant_id IS NOT NULL AND alias IS NOT NULL AND id IS NOT NULL
     PRIMARY KEY ( tenant_id, alias, id )
     WITH CLUSTERING ORDER BY ( alias ASC, id DESC );
 
-CREATE TABLE IF NOT EXISTS thingsboard.widget_type (
+CREATE TABLE IF NOT EXISTS smartspaceai.widget_type (
     id timeuuid,
     tenant_id timeuuid,
     bundle_alias text,
@@ -377,14 +377,14 @@ CREATE TABLE IF NOT EXISTS thingsboard.widget_type (
     PRIMARY KEY (id, tenant_id, bundle_alias)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.widget_type_by_tenant_and_aliases AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.widget_type_by_tenant_and_aliases AS
     SELECT *
-    from thingsboard.widget_type
+    from smartspaceai.widget_type
     WHERE tenant_id IS NOT NULL AND bundle_alias IS NOT NULL AND alias IS NOT NULL AND id IS NOT NULL
     PRIMARY KEY ( tenant_id, bundle_alias, alias, id )
     WITH CLUSTERING ORDER BY ( bundle_alias ASC, alias ASC, id DESC );
 
-CREATE TABLE IF NOT EXISTS thingsboard.dashboard (
+CREATE TABLE IF NOT EXISTS smartspaceai.dashboard (
 	id timeuuid,
 	tenant_id timeuuid,
 	title text,
@@ -394,14 +394,14 @@ CREATE TABLE IF NOT EXISTS thingsboard.dashboard (
 	PRIMARY KEY (id, tenant_id)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.dashboard_by_tenant_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.dashboard_by_tenant_and_search_text AS
 	SELECT *
-	from thingsboard.dashboard
+	from smartspaceai.dashboard
 	WHERE tenant_id IS NOT NULL AND search_text IS NOT NULL AND id IS NOT NULL
 	PRIMARY KEY ( tenant_id, search_text, id )
 	WITH CLUSTERING ORDER BY ( search_text ASC, id DESC );
 
-CREATE TABLE IF NOT EXISTS thingsboard.attributes_kv_cf (
+CREATE TABLE IF NOT EXISTS smartspaceai.attributes_kv_cf (
     entity_type text, // (DEVICE, CUSTOMER, TENANT)
     entity_id timeuuid,
     attribute_type text, // (CLIENT_SIDE, SHARED, SERVER_SIDE)
@@ -414,7 +414,7 @@ CREATE TABLE IF NOT EXISTS thingsboard.attributes_kv_cf (
     PRIMARY KEY ((entity_type, entity_id, attribute_type), attribute_key)
 ) WITH compaction = { 'class' :  'LeveledCompactionStrategy'  };
 
-CREATE TABLE IF NOT EXISTS  thingsboard.component_descriptor (
+CREATE TABLE IF NOT EXISTS  smartspaceai.component_descriptor (
     id timeuuid,
     type text,
     scope text,
@@ -426,28 +426,28 @@ CREATE TABLE IF NOT EXISTS  thingsboard.component_descriptor (
     PRIMARY KEY (clazz, id, type, scope)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.component_desc_by_type_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.component_desc_by_type_search_text AS
     SELECT *
-    from thingsboard.component_descriptor
+    from smartspaceai.component_descriptor
     WHERE type IS NOT NULL AND scope IS NOT NULL AND search_text IS NOT NULL AND id IS NOT NULL AND clazz IS NOT NULL
     PRIMARY KEY ( type, search_text, id, clazz, scope)
     WITH CLUSTERING ORDER BY ( search_text DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.component_desc_by_scope_type_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.component_desc_by_scope_type_search_text AS
     SELECT *
-    from thingsboard.component_descriptor
+    from smartspaceai.component_descriptor
     WHERE type IS NOT NULL AND scope IS NOT NULL AND search_text IS NOT NULL AND id IS NOT NULL AND clazz IS NOT NULL
     PRIMARY KEY ( (scope, type), search_text, id, clazz)
     WITH CLUSTERING ORDER BY ( search_text DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.component_desc_by_id AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.component_desc_by_id AS
     SELECT *
-    from thingsboard.component_descriptor
+    from smartspaceai.component_descriptor
     WHERE type IS NOT NULL AND scope IS NOT NULL AND id IS NOT NULL AND clazz IS NOT NULL
     PRIMARY KEY ( id, clazz, scope, type )
     WITH CLUSTERING ORDER BY ( clazz ASC, scope ASC, type DESC);
 
-CREATE TABLE IF NOT EXISTS thingsboard.event (
+CREATE TABLE IF NOT EXISTS smartspaceai.event (
 	tenant_id timeuuid, // tenant or system
 	id timeuuid,
 	event_type text,
@@ -458,24 +458,24 @@ CREATE TABLE IF NOT EXISTS thingsboard.event (
 	PRIMARY KEY ((tenant_id, entity_type, entity_id), event_type, event_uid)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.event_by_type_and_id AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.event_by_type_and_id AS
     SELECT *
-    FROM thingsboard.event
+    FROM smartspaceai.event
     WHERE tenant_id IS NOT NULL AND entity_type IS NOT NULL AND entity_id IS NOT NULL AND id IS NOT NULL
     AND event_type IS NOT NULL AND event_uid IS NOT NULL
     PRIMARY KEY ((tenant_id, entity_type, entity_id), event_type, id, event_uid)
     WITH CLUSTERING ORDER BY (event_type ASC, id ASC, event_uid ASC);
 
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.event_by_id AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.event_by_id AS
     SELECT *
-    FROM thingsboard.event
+    FROM smartspaceai.event
     WHERE tenant_id IS NOT NULL AND entity_type IS NOT NULL AND entity_id IS NOT NULL AND id IS NOT NULL
     AND event_type IS NOT NULL AND event_uid IS NOT NULL
     PRIMARY KEY ((tenant_id, entity_type, entity_id), id, event_type, event_uid)
     WITH CLUSTERING ORDER BY (id ASC, event_type ASC, event_uid ASC);
 
-CREATE TABLE IF NOT EXISTS thingsboard.audit_log_by_entity_id (
+CREATE TABLE IF NOT EXISTS smartspaceai.audit_log_by_entity_id (
   tenant_id timeuuid,
   id timeuuid,
   customer_id timeuuid,
@@ -491,7 +491,7 @@ CREATE TABLE IF NOT EXISTS thingsboard.audit_log_by_entity_id (
   PRIMARY KEY ((tenant_id, entity_id, entity_type), id)
 );
 
-CREATE TABLE IF NOT EXISTS thingsboard.audit_log_by_customer_id (
+CREATE TABLE IF NOT EXISTS smartspaceai.audit_log_by_customer_id (
   tenant_id timeuuid,
   id timeuuid,
   customer_id timeuuid,
@@ -507,7 +507,7 @@ CREATE TABLE IF NOT EXISTS thingsboard.audit_log_by_customer_id (
   PRIMARY KEY ((tenant_id, customer_id), id)
 );
 
-CREATE TABLE IF NOT EXISTS thingsboard.audit_log_by_user_id (
+CREATE TABLE IF NOT EXISTS smartspaceai.audit_log_by_user_id (
   tenant_id timeuuid,
   id timeuuid,
   customer_id timeuuid,
@@ -523,7 +523,7 @@ CREATE TABLE IF NOT EXISTS thingsboard.audit_log_by_user_id (
   PRIMARY KEY ((tenant_id, user_id), id)
 );
 
-CREATE TABLE IF NOT EXISTS thingsboard.audit_log_by_tenant_id (
+CREATE TABLE IF NOT EXISTS smartspaceai.audit_log_by_tenant_id (
   tenant_id timeuuid,
   id timeuuid,
   partition bigint,
@@ -540,14 +540,14 @@ CREATE TABLE IF NOT EXISTS thingsboard.audit_log_by_tenant_id (
   PRIMARY KEY ((tenant_id, partition), id)
 );
 
-CREATE TABLE IF NOT EXISTS thingsboard.audit_log_by_tenant_id_partitions (
+CREATE TABLE IF NOT EXISTS smartspaceai.audit_log_by_tenant_id_partitions (
   tenant_id timeuuid,
   partition bigint,
   PRIMARY KEY (( tenant_id ), partition)
 ) WITH CLUSTERING ORDER BY ( partition ASC )
 AND compaction = { 'class' :  'LeveledCompactionStrategy'  };
 
-CREATE TABLE IF NOT EXISTS thingsboard.msg_queue (
+CREATE TABLE IF NOT EXISTS smartspaceai.msg_queue (
     node_id         timeuuid,
     cluster_partition    bigint,
     ts_partition       bigint,
@@ -564,7 +564,7 @@ AND compaction = {
     'unchecked_tombstone_compaction': 'true'
 };
 
-CREATE TABLE IF NOT EXISTS thingsboard.msg_ack_queue (
+CREATE TABLE IF NOT EXISTS smartspaceai.msg_ack_queue (
     node_id         timeuuid,
     cluster_partition    bigint,
     ts_partition       bigint,
@@ -580,7 +580,7 @@ AND compaction = {
     'unchecked_tombstone_compaction': 'true'
 };
 
-CREATE TABLE IF NOT EXISTS thingsboard.processed_msg_partitions (
+CREATE TABLE IF NOT EXISTS smartspaceai.processed_msg_partitions (
     node_id         timeuuid,
     cluster_partition    bigint,
     ts_partition       bigint,
@@ -595,7 +595,7 @@ AND compaction = {
     'unchecked_tombstone_compaction': 'true'
 };
 
-CREATE TABLE IF NOT EXISTS  thingsboard.rule_chain (
+CREATE TABLE IF NOT EXISTS  smartspaceai.rule_chain (
     id uuid,
     tenant_id uuid,
     name text,
@@ -608,14 +608,14 @@ CREATE TABLE IF NOT EXISTS  thingsboard.rule_chain (
     PRIMARY KEY (id, tenant_id)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.rule_chain_by_tenant_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.rule_chain_by_tenant_and_search_text AS
     SELECT *
-    from thingsboard.rule_chain
+    from smartspaceai.rule_chain
     WHERE tenant_id IS NOT NULL AND search_text IS NOT NULL AND id IS NOT NULL
     PRIMARY KEY ( tenant_id, search_text, id )
     WITH CLUSTERING ORDER BY ( search_text ASC, id DESC );
 
-CREATE TABLE IF NOT EXISTS  thingsboard.rule_node (
+CREATE TABLE IF NOT EXISTS  smartspaceai.rule_node (
     id uuid,
     rule_chain_id uuid,
     type text,
@@ -627,7 +627,7 @@ CREATE TABLE IF NOT EXISTS  thingsboard.rule_node (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS thingsboard.entity_view (
+CREATE TABLE IF NOT EXISTS smartspaceai.entity_view (
     id timeuuid,
     entity_id timeuuid,
     entity_type text,
@@ -643,9 +643,9 @@ CREATE TABLE IF NOT EXISTS thingsboard.entity_view (
     PRIMARY KEY (id, entity_id, tenant_id, customer_id, type)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.entity_view_by_tenant_and_name AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.entity_view_by_tenant_and_name AS
     SELECT *
-    from thingsboard.entity_view
+    from smartspaceai.entity_view
     WHERE tenant_id IS NOT NULL
       AND entity_id IS NOT NULL
       AND customer_id IS NOT NULL
@@ -655,9 +655,9 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.entity_view_by_tenant_and_nam
     PRIMARY KEY (tenant_id, name, id, customer_id, entity_id, type)
     WITH CLUSTERING ORDER BY (name ASC, id DESC, customer_id DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.entity_view_by_tenant_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.entity_view_by_tenant_and_search_text AS
     SELECT *
-    from thingsboard.entity_view
+    from smartspaceai.entity_view
     WHERE tenant_id IS NOT NULL
       AND entity_id IS NOT NULL
       AND customer_id IS NOT NULL
@@ -667,9 +667,9 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.entity_view_by_tenant_and_sea
     PRIMARY KEY (tenant_id, search_text, id, customer_id, entity_id, type)
     WITH CLUSTERING ORDER BY (search_text ASC, id DESC, customer_id DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.entity_view_by_tenant_by_type_and_search_text AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.entity_view_by_tenant_by_type_and_search_text AS
     SELECT *
-    from thingsboard.entity_view
+    from smartspaceai.entity_view
     WHERE tenant_id IS NOT NULL
       AND entity_id IS NOT NULL
       AND customer_id IS NOT NULL
@@ -679,9 +679,9 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.entity_view_by_tenant_by_type
     PRIMARY KEY (tenant_id, type, search_text, id, customer_id, entity_id)
     WITH CLUSTERING ORDER BY (type ASC, search_text ASC, id DESC, customer_id DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.entity_view_by_tenant_and_customer AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.entity_view_by_tenant_and_customer AS
     SELECT *
-    from thingsboard.entity_view
+    from smartspaceai.entity_view
     WHERE tenant_id IS NOT NULL
       AND customer_id IS NOT NULL
       AND entity_id IS NOT NULL
@@ -691,9 +691,9 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.entity_view_by_tenant_and_cus
     PRIMARY KEY (tenant_id, customer_id, search_text, id, entity_id, type)
     WITH CLUSTERING ORDER BY (customer_id DESC, search_text ASC, id DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.entity_view_by_tenant_and_customer_and_type AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.entity_view_by_tenant_and_customer_and_type AS
     SELECT *
-    from thingsboard.entity_view
+    from smartspaceai.entity_view
     WHERE tenant_id IS NOT NULL
       AND customer_id IS NOT NULL
       AND entity_id IS NOT NULL
@@ -703,9 +703,9 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.entity_view_by_tenant_and_cus
     PRIMARY KEY (tenant_id, type, customer_id, search_text, id, entity_id)
     WITH CLUSTERING ORDER BY (type ASC, customer_id DESC, search_text ASC, id DESC);
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS thingsboard.entity_view_by_tenant_and_entity_id AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS smartspaceai.entity_view_by_tenant_and_entity_id AS
     SELECT *
-    from thingsboard.entity_view
+    from smartspaceai.entity_view
     WHERE tenant_id IS NOT NULL
       AND customer_id IS NOT NULL
       AND entity_id IS NOT NULL

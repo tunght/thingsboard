@@ -14,13 +14,13 @@
 -- limitations under the License.
 --
 
-CREATE KEYSPACE IF NOT EXISTS thingsboard
+CREATE KEYSPACE IF NOT EXISTS smartspaceai
 WITH replication = {
 	'class' : 'SimpleStrategy',
 	'replication_factor' : 1
 };
 
-CREATE TABLE IF NOT EXISTS thingsboard.ts_kv_cf (
+CREATE TABLE IF NOT EXISTS smartspaceai.ts_kv_cf (
     entity_type text, // (DEVICE, CUSTOMER, TENANT)
     entity_id timeuuid,
     key text,
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS thingsboard.ts_kv_cf (
     PRIMARY KEY (( entity_type, entity_id, key, partition ), ts)
 );
 
-CREATE TABLE IF NOT EXISTS thingsboard.ts_kv_partitions_cf (
+CREATE TABLE IF NOT EXISTS smartspaceai.ts_kv_partitions_cf (
     entity_type text, // (DEVICE, CUSTOMER, TENANT)
     entity_id timeuuid,
     key text,
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS thingsboard.ts_kv_partitions_cf (
 ) WITH CLUSTERING ORDER BY ( partition ASC )
   AND compaction = { 'class' :  'LeveledCompactionStrategy'  };
 
-CREATE TABLE IF NOT EXISTS thingsboard.ts_kv_latest_cf (
+CREATE TABLE IF NOT EXISTS smartspaceai.ts_kv_latest_cf (
     entity_type text, // (DEVICE, CUSTOMER, TENANT)
     entity_id timeuuid,
     key text,

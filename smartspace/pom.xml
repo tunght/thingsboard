@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.smartspaceai</groupId>
+    <artifactId>smartspaceai</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>Thingsboard plugins for SmartSpace AI</name>
+    <url>https://smartspaceai.com</url>
+    <inceptionYear>2019</inceptionYear>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main.dir>${basedir}/..</main.dir>
+        <tb.version>2.4.3</tb.version>
+        <lombok.version>1.16.18</lombok.version>
+        <guava.version>21.0</guava.version>
+        <gson.version>2.8.6</gson.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.thingsboard.common</groupId>
+            <artifactId>data</artifactId>
+            <scope>provided</scope>
+            <version>${tb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thingsboard.common</groupId>
+            <artifactId>message</artifactId>
+            <scope>provided</scope>
+            <version>${tb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thingsboard.common.transport</groupId>
+            <artifactId>transport-api</artifactId>
+            <scope>provided</scope>
+            <version>${tb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thingsboard.common</groupId>
+            <artifactId>util</artifactId>
+            <scope>provided</scope>
+            <version>${tb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thingsboard.common</groupId>
+            <artifactId>dao-api</artifactId>
+            <scope>provided</scope>
+            <version>${tb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thingsboard.rule-engine</groupId>
+            <artifactId>rule-engine-api</artifactId>
+            <scope>provided</scope>
+            <version>${tb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+            <version>${lombok.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <scope>provided</scope>
+            <version>${guava.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.google.code.gson</groupId>
+          <artifactId>gson</artifactId>
+          <version>${gson.version}</version>
+        </dependency>
+    </dependencies>
+
+    <modules>
+        <module>rule-nodes</module>
+    </modules>
+</project>
