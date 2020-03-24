@@ -17,6 +17,8 @@
 
 md-card.tb-login-card {
   width: 330px !important;
+  margin-top: 40px;
+  box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.15);
 
   @media (min-width: $layout-breakpoint-sm) {
     width: 450px !important;
@@ -24,8 +26,18 @@ md-card.tb-login-card {
 
   md-card-title {
     img.tb-login-logo {
-      height: 50px;
+      width: 80px;
+      height: 80px;
     }
+
+    div.login-logo {
+      width: 80px;
+      margin-top: -70px;
+      background-color: #fff;
+      border-radius: 50%;
+    }
+
+    justify-content: center;
   }
 
   md-card-content {
