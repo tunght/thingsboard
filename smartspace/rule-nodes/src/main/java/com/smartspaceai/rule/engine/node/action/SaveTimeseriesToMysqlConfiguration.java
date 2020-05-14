@@ -11,7 +11,7 @@ public class SaveTimeseriesToMysqlConfiguration implements NodeConfiguration<Sav
   private String databaseUsername;
   private String databaseName;
   private String dataQuery;
-
+  private String tableName;
   @Override
   public SaveTimeseriesToMysqlConfiguration defaultConfiguration() {
     SaveTimeseriesToMysqlConfiguration configuration = new SaveTimeseriesToMysqlConfiguration();
@@ -20,7 +20,8 @@ public class SaveTimeseriesToMysqlConfiguration implements NodeConfiguration<Sav
     configuration.setDatabasePassword("");
     configuration.setDatabaseName("");
     configuration.setDataQuery("");
-    configuration.getDatabaseUrl();
+    configuration.setTableName("");
+    
     return configuration;
   }
 }

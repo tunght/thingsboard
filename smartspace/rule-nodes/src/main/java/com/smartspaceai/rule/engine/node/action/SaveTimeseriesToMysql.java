@@ -88,26 +88,42 @@ public class SaveTimeseriesToMysql implements TbNode {
         return;
       }
 
-      String sql = "INSERT INTO themet_people_count (time, camera_name, count) VALUES(?, ?, ?)";
+      String sql = "INSERT INTO " + this.config.getTableName() + " (time, camera_name, count, in, out) VALUES(?, ?, ?, ?, ?)";
       PreparedStatement pst = mysqlConn.prepareStatement(sql);
 
       JsonNode jsonNode = mapper.readTree(msg.getData());
 
       EntityId originator = msg.getOriginator();
 
-      if (originator.getEntityType() == EntityType.DEVICE && jsonNode.has("count")) {
-        int count = jsonNode.get("count").asInt();
+      if (originator.getEntityType() == EntityType.DEVICE && (jsonNode.has("count") || jsonNode.has("in") || jsonNode.has("out"))) {
+        int count = 0;
+        int in = 0;
+        int out = 0;
+        if (jsonNode.has("count")) {
+          count = jsonNode.get("count").asInt();
+        }
+
+        if (jsonNode.has("in")) {
+          in = jsonNode.get("in").asInt();
+        }
+
+        if (jsonNode.has("out")) {
+          out = jsonNode.get("out").asInt();
+        }
+        
         Timestamp sqlTs = new Timestamp(ts);
         String camName = msg.getMetaData().getValue("originatorName");
         log.info("Cam name " + camName);
         pst.setTimestamp(1, sqlTs);
         pst.setString(2, camName);
         pst.setInt(3, count);
+        pst.setInt(4, in);
+        pst.setInt(5, out);
         pst.executeUpdate();
       }
 
     } catch (Exception ex) {
-      log.info("ERror inserting data to mysql " + ex.getMessage());
+      log.info("Error inserting data to mysql " + ex.getMessage());
       ctx.tellFailure(msg, ex);
     }
   }
